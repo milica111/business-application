@@ -18,4 +18,7 @@ public class BusinessEntry {
 	@JsonProperty("opening_hours")
 	private OpeningHours openingHours;
 	
+	private boolean isOpen;
+	
 }
+

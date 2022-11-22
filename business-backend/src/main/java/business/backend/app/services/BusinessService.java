@@ -1,5 +1,8 @@
 package business.backend.app.services;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,10 +27,33 @@ public class BusinessService implements BusinessServiceInterface {
 	
 	public BusinessEntry getBusinessEntry(String id) {
 		BusinessEntry businessEntry=businessEntryClient.getBusinessEntry(id);
-				
-		Map<String,ArrayList<WorkingTime>> map= removeDuplicate(businessEntry.getOpeningHours().getDays());
+		
+		Map<String,ArrayList<WorkingTime>> days= businessEntry.getOpeningHours().getDays();
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		DayOfWeek day=now.getDayOfWeek();
+		
+		ArrayList<WorkingTime> workingTimes=days.get(day.toString().toLowerCase());
+		LocalTime nowTime=now.toLocalTime();
+		
+		
+		for (WorkingTime workingTime : workingTimes) {
+			LocalTime startTime=workingTime.getStart();
+			LocalTime endTime = workingTime.getEnd();
+			if(endTime.equals(LocalTime.MIN)) endTime=LocalTime.MAX;
+			if((startTime.isBefore(nowTime) || startTime.equals(nowTime)) && (endTime.isAfter(nowTime))) {		
+				businessEntry.setOpen(true);
+				break;
+			}
+		}
+		
+		
+		Map<String,ArrayList<WorkingTime>> map= removeDuplicate(days);
+		
 		
 		businessEntry.getOpeningHours().setDays(map);
+		
 		
 		return businessEntry;
 	}
@@ -54,3 +80,4 @@ public class BusinessService implements BusinessServiceInterface {
 	
 
 }
+

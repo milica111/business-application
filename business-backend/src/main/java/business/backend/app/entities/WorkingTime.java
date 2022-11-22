@@ -1,6 +1,10 @@
 package business.backend.app.entities;
 
+import java.time.LocalTime;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +12,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WorkingTime {
-
-	private String start;
-	private String end;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+	private LocalTime start;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm")
+	private LocalTime end;
+	
 	private String type;
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(end, start, type);
@@ -29,3 +38,4 @@ public class WorkingTime {
 	}
 	
 }
+
